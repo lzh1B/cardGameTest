@@ -6,13 +6,16 @@
 
 class GameController {
 public:
-    explicit GameController(const std::vector<CardData>& playfield, const std::vector<CardData>& stack);
+    explicit GameController(std::vector<CardData>* playfield, std::vector<CardData>* stack);
     ~GameController();
 
     void logPlayfield() const;
     void logStack() const;
 
+    std::vector<CardData>* getPlayfieldCards(){ return _playfieldCards; }
+    std::vector<CardData>* getStackCards(){ return _stackCards; }
 private:
-    std::vector<CardData> _playfieldCards;
-    std::vector<CardData> _stackCards;
+    std::vector<CardData>* _playfieldCards = nullptr;
+    std::vector<CardData>* _stackCards = nullptr;
+
 };

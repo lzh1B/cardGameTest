@@ -14,11 +14,13 @@ public:
     ~GameScene();//析构函数
 
     void setController(GameController* controller);
-
+    void createUI();
 private:
     int _levelNumber = 0;
     cocos2d::LayerColor* _topLayer = nullptr;
     cocos2d::LayerColor* _bottomLayer = nullptr;
 
     GameController* _controller = nullptr; // 控制器
+
+    std::vector<cocos2d::Sprite*> _playfieldSprites; // 新增：保存 playfield 卡片精灵
 };

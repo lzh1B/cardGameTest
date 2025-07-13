@@ -69,12 +69,6 @@ bool LevelSelectScene::init() {
                     CCLOG("Selected Level: %d", levelNumber);
                     auto playfieldCards = JsonUtils::parsePlayfield(levelNumber);
                     auto stackCards = JsonUtils::parseStack(levelNumber);
-
-                    CCLOG("---------- Playfield %d Cards ----------", levelNumber);
-                    JsonUtils::printCards(playfieldCards, "Playfield:");
-
-                    CCLOG("---------- Stack %d Cards ----------", levelNumber);
-                    JsonUtils::printCards(stackCards, "Stack:   ");
                     Director::getInstance()->pushScene(
                         TransitionFade::create(0.5f, GameScene::createScene(levelNumber))
                     );

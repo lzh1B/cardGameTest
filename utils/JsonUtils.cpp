@@ -1,4 +1,3 @@
-// JsonUtils.cpp
 #include "JsonUtils.h"
 #include "cocos2d.h"
 #include "json/document.h"
@@ -48,7 +47,6 @@ void loadAllLevelsFromJson() {
     }
 
     for (int i = 1; i <= 6; ++i) {
-        // Playfield ½âÎö
         std::string playfieldKey = "playfield" + std::to_string(i);
         if (document.HasMember(playfieldKey.c_str()) && document[playfieldKey.c_str()].IsArray()) {
             std::vector<CardData> cards;
@@ -63,7 +61,6 @@ void loadAllLevelsFromJson() {
             s_cachedPlayfields[i] = cards;
         }
 
-        // Stack ½âÎö
         std::string stackKey = "stack" + std::to_string(i);
         if (document.HasMember(stackKey.c_str()) && document[stackKey.c_str()].IsArray()) {
             std::vector<CardData> cards;
@@ -80,31 +77,26 @@ void loadAllLevelsFromJson() {
     }
 }
 
-std::vector<CardData> JsonUtils::parsePlayfield(int levelNumber) {
+std::vector<CardData>* JsonUtils::parsePlayfield(int levelNumber) {
     loadAllLevelsFromJson();
 
     auto it = s_cachedPlayfields.find(levelNumber);
     if (it != s_cachedPlayfields.end()) {
-        return it->second;
+        return &it->second;
     }
+
     CCLOG("Error: Playfield Level %d not found", levelNumber);
-    return {};
+    return nullptr;
 }
 
-std::vector<CardData> JsonUtils::parseStack(int levelNumber) {
+std::vector<CardData>* JsonUtils::parseStack(int levelNumber) {
     loadAllLevelsFromJson();
 
     auto it = s_cachedStacks.find(levelNumber);
     if (it != s_cachedStacks.end()) {
-        return it->second;
+        return &it->second;
     }
-    CCLOG("Error: Stack Level %d not found", levelNumber);
-    return {};
-}
 
-void JsonUtils::printCards(const std::vector<CardData>& cards, const std::string& prefix) {
-    for (const auto& card : cards) {
-        CCLOG("%s Face=%d Suit=%d Position=(%d, %d)",
-            prefix.c_str(), card.cardFace, card.cardSuit, card.posX, card.posY);
-    }
+    CCLOG("Error: Stack Level %d not found", levelNumber);
+    return nullptr;
 }
