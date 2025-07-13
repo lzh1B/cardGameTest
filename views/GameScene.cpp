@@ -56,6 +56,35 @@ bool GameScene::init() {
         }
         });
     this->addChild(homeButton,10);
+    // ==== Ìí¼Ó´¥Ãþ¼àÌýÆ÷ ====
+
+   // Top Layer µã»÷¼àÌý
+    auto topTouchListener = EventListenerTouchOneByOne::create();
+    topTouchListener->onTouchBegan = [this](Touch* touch, Event* event) {
+        Vec2 touchLocation = touch->getLocation();
+        if (_topLayer->getBoundingBox().containsPoint(touchLocation)) {
+            CCLOG("Touched Top Layer");
+            return true; // ÍÌµôÊÂ¼þ
+        }
+        return false;
+        };
+    topTouchListener->setSwallowTouches(true);
+    Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(topTouchListener, _topLayer);
+
+    // Bottom Layer µã»÷¼àÌý
+    auto bottomTouchListener = EventListenerTouchOneByOne::create();
+    bottomTouchListener->onTouchBegan = [this](Touch* touch, Event* event) {
+        Vec2 touchLocation = touch->getLocation();
+        if (_bottomLayer->getBoundingBox().containsPoint(touchLocation)) {
+            CCLOG("Touched Bottom Layer");
+            return true; // ÍÌµôÊÂ¼þ
+        }
+        return false;
+        };
+    bottomTouchListener->setSwallowTouches(true);
+    Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(bottomTouchListener, _bottomLayer);
+
+    return true;
 
     return true;
 }
