@@ -127,10 +127,12 @@ void GameScene::createUI() {
     Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(bottomTouchListener, _bottomLayer);
 }
 GameScene::~GameScene() {
+    CC_SAFE_DELETE(_topLayer);
+    CC_SAFE_DELETE(_bottomLayer);
     CC_SAFE_DELETE(_controller); // 析构：输出 "GameController Destroyed"
+
 }
 // GameScene.cpp
 void GameScene::setController(GameController* controller) {
-    //CC_SAFE_DELETE(_controller); // 安全删除旧对象
     _controller = controller;
 }
