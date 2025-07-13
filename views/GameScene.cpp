@@ -239,7 +239,6 @@ void GameScene::moveCardToTopLayer(CardView* card) {
         _topSprites.push_back(card);
     }
 
-    // 调整zOrder确保正确显示
     card->setLocalZOrder(1);
 }
 
@@ -256,7 +255,6 @@ void GameScene::moveCardToBottomLayer(CardView* card) {
         _bottomSprites.push_back(card);
     }
 
-    // 调整zOrder确保正确显示
     card->setLocalZOrder(2);
 }
 /*********************************7.13*******************////////////////////////
