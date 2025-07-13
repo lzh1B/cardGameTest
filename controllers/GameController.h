@@ -3,6 +3,7 @@
 
 #include <vector>
 #include "models/CardData.h"
+#include "managers/GameManager.h"
 
 class GameController {
 public:
@@ -12,10 +13,8 @@ public:
     void logPlayfield() const;
     void logStack() const;
 
-    std::vector<CardData>* getPlayfieldCards(){ return _playfieldCards; }
-    std::vector<CardData>* getStackCards(){ return _stackCards; }
+    std::vector<CardData>* getPlayfieldCards(){ return _manager->getPlayfieldCards(); }
+    std::vector<CardData>* getStackCards(){ return _manager->getStackCards(); }
 private:
-    std::vector<CardData>* _playfieldCards = nullptr;
-    std::vector<CardData>* _stackCards = nullptr;
-
+    GameManager* _manager = nullptr;
 };
