@@ -3,13 +3,8 @@
 #include "cocos2d.h"
 #include <vector>
 #include <string>
+#include "models/CardData.h"
 
-struct CardData {
-    int cardFace;
-    int cardSuit;
-    int posX;
-    int posY;
-};
 
 class JsonUtils {
 public:

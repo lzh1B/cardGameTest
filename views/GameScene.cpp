@@ -18,7 +18,8 @@ bool GameScene::init() {
     if (!Scene::init()) {
         return false;
     }
-
+    // 初始化 controller
+    _controller = new GameController(); // 构造：输出 "GameController Created"
     auto visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
@@ -84,7 +85,9 @@ bool GameScene::init() {
     bottomTouchListener->setSwallowTouches(true);
     Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(bottomTouchListener, _bottomLayer);
 
-    return true;
 
     return true;
+}
+GameScene::~GameScene() {
+    CC_SAFE_DELETE(_controller); // 析构：输出 "GameController Destroyed"
 }
