@@ -5,7 +5,7 @@
 #include "controllers/GameController.h"  // 引入 GameController
 #include "CardView.h"
 
-
+class GameController;
 class GameScene : public cocos2d::Scene {
 public:
     // 用这个方法创建场景，并传入 levelNumber
@@ -27,6 +27,10 @@ public:
 
     // 按钮点击处理
     void onHomeButtonClicked();
+    /**********************7.13*********/
+    void moveCardToTopLayer(CardView* card);
+    void moveCardToBottomLayer(CardView* card);
+    /**********************7.13*********////////////////
 private:
     int _levelNumber = 0;
     cocos2d::LayerColor* _topLayer = nullptr;

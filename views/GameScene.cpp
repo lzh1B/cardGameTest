@@ -11,9 +11,10 @@ Scene* GameScene::createScene(int levelNumber) {
     auto scene = Scene::create();
     auto playfieldCards = JsonUtils::parsePlayfield(levelNumber);
     auto stackCards = JsonUtils::parseStack(levelNumber);
-    GameController* controller = new GameController(playfieldCards, stackCards);
 
     auto layer = GameScene::create();
+    GameController* controller = new GameController(layer, playfieldCards, stackCards);
+
     layer->setController(controller);
     layer->_levelNumber = levelNumber;
     layer->createUI();
@@ -118,6 +119,13 @@ void GameScene::createCardSprites() {
             log("12111111111111111111:   isTopCard: %d", isTopCard);
             cardSprite->setIsTopCard(isTopCard);
 
+/******************7.13 **************/
+
+// 如果是顶部牌，设置到控制器
+            if (isTopCard && _controller) {
+                _controller->setCurrentTopCard(cardSprite);
+            }
+/******************7.13 **************/////////////////////
             _bottomSprites.push_back(cardSprite);
         }
         else {
@@ -138,7 +146,7 @@ void GameScene::registerTouchEventHandlers() {
         // 1. 检查是否点击了顶部精灵（优先处理）
         for (auto it = _topSprites.rbegin(); it != _topSprites.rend(); ++it) {
             auto sprite = *it;
-            if (sprite && sprite->getBoundingBox().containsPoint(touchLocation)) {
+            if (sprite &&sprite->isVisible() && sprite->getBoundingBox().containsPoint(touchLocation)) {
                 CCLOG("Touched top layer sprite");
                 //this->handleTopLayerSpriteTouch(sprite);
                 // 调用控制器处理精灵触摸
@@ -152,7 +160,7 @@ void GameScene::registerTouchEventHandlers() {
         // 2. 检查是否点击了底部精灵
         for (auto it = _bottomSprites.rbegin(); it != _bottomSprites.rend(); ++it) {
             auto sprite = *it;
-            if (sprite && sprite->getBoundingBox().containsPoint(touchLocation)) {
+            if (sprite && sprite->isVisible() && sprite->getBoundingBox().containsPoint(touchLocation)) {
                 CCLOG("Touched bottom layer sprite");
                 //this->handleBottomLayerSpriteTouch(sprite);
                 // 调用控制器处理精灵触摸
@@ -216,3 +224,39 @@ GameScene::~GameScene() {
 void GameScene::setController(GameController* controller) {
     _controller = controller;
 }
+
+/*********************************7.13*******************/
+void GameScene::moveCardToTopLayer(CardView* card) {
+    // 从手牌容器中移除
+    auto bottomIt = std::find(_bottomSprites.begin(), _bottomSprites.end(), card);
+    if (bottomIt != _bottomSprites.end()) {
+        _bottomSprites.erase(bottomIt);
+    }
+
+    // 添加到桌面牌容器
+    auto topIt = std::find(_topSprites.begin(), _topSprites.end(), card);
+    if (topIt == _topSprites.end()) {
+        _topSprites.push_back(card);
+    }
+
+    // 调整zOrder确保正确显示
+    card->setLocalZOrder(1);
+}
+
+void GameScene::moveCardToBottomLayer(CardView* card) {
+    // 从桌面牌容器中移除
+    auto topIt = std::find(_topSprites.begin(), _topSprites.end(), card);
+    if (topIt != _topSprites.end()) {
+        _topSprites.erase(topIt);
+    }
+
+    // 添加到手牌容器
+    auto bottomIt = std::find(_bottomSprites.begin(), _bottomSprites.end(), card);
+    if (bottomIt == _bottomSprites.end()) {
+        _bottomSprites.push_back(card);
+    }
+
+    // 调整zOrder确保正确显示
+    card->setLocalZOrder(2);
+}
+/*********************************7.13*******************////////////////////////
