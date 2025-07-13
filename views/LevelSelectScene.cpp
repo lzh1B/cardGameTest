@@ -2,6 +2,7 @@
 #include "LevelSelectScene.h"
 #include "ui/CocosGUI.h"
 #include "utils/JsonUtils.h"
+#include "GameScene.h"
 
 USING_NS_CC;
 
@@ -74,6 +75,9 @@ bool LevelSelectScene::init() {
 
                     CCLOG("---------- Stack %d Cards ----------", levelNumber);
                     JsonUtils::printCards(stackCards, "Stack:   ");
+                    Director::getInstance()->pushScene(
+                        TransitionFade::create(0.5f, GameScene::createScene(levelNumber))
+                    );
                 }
                 });
             this->addChild(button);
