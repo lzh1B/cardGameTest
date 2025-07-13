@@ -12,5 +12,7 @@ public:
     virtual bool init() override;
 
 private:
-    int _levelNumber;
+    int _levelNumber = 0;
+    cocos2d::LayerColor* _topLayer = nullptr;
+    cocos2d::LayerColor* _bottomLayer = nullptr;
 };
