@@ -2,12 +2,20 @@
 #include "GameScene.h"
 #include "ui/CocosGUI.h"
 #include "LevelSelectScene.h"
+#include "utils/JsonUtils.h"
 
 USING_NS_CC;
 
 Scene* GameScene::createScene(int levelNumber) {
     auto scene = Scene::create();        // 创建空场景
     auto layer = GameScene::create();   // 调用 CREATE_FUNC 提供的 create()
+    // 从 JsonUtils 获取数据
+    auto playfieldCards = JsonUtils::parsePlayfield(levelNumber);
+
+    auto stackCards = JsonUtils::parseStack(levelNumber);
+
+    // 构造 controller 并保存数据
+    layer->setController(new GameController(playfieldCards, stackCards));
     layer->_levelNumber = levelNumber;  // 设置关卡号
     log("level number is : xxxxx %d", layer->_levelNumber);
     scene->addChild(layer);             // 添加 GameScene 层到场景中
@@ -18,8 +26,9 @@ bool GameScene::init() {
     if (!Scene::init()) {
         return false;
     }
-    // 初始化 controller
-    _controller = new GameController(); // 构造：输出 "GameController Created"
+    // 验证 controller的数据
+    //_controller->logPlayfield();
+    //_controller->logStack();
     auto visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
@@ -90,4 +99,9 @@ bool GameScene::init() {
 }
 GameScene::~GameScene() {
     CC_SAFE_DELETE(_controller); // 析构：输出 "GameController Destroyed"
+}
+// GameScene.cpp
+void GameScene::setController(GameController* controller) {
+    //CC_SAFE_DELETE(_controller); // 安全删除旧对象
+    _controller = controller;
 }

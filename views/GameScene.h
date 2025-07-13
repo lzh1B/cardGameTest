@@ -13,10 +13,12 @@ public:
     virtual bool init() override;
     ~GameScene();//析构函数
 
+    void setController(GameController* controller);
+
 private:
     int _levelNumber = 0;
     cocos2d::LayerColor* _topLayer = nullptr;
     cocos2d::LayerColor* _bottomLayer = nullptr;
 
-    GameController* _controller; // 控制器
+    GameController* _controller = nullptr; // 控制器
 };
