@@ -28,7 +28,7 @@ public:
 
     // ·ÃÎÊÆ÷·½·¨
     CardView* getCurrentTopCard() { return _currentTopCard; }
-    void setCurrentTopCard(CardView* card) { _currentTopCard = card; }
+    void setCurrentTopCard(CardView* card);
     GameScene* getGameScene() { return _gameScene; }
     UndoManager* getUndoManager() { return &_undoManager; }
 
