@@ -15,6 +15,19 @@ public:
 
     void setController(GameController* controller);
     void createUI();
+    void createCardSprites();
+    void registerTouchEventHandlers();
+
+    // 触摸事件处理
+    bool onTopLayerTouched(cocos2d::Touch* touch, cocos2d::Event* event);
+    bool onBottomLayerTouched(cocos2d::Touch* touch, cocos2d::Event* event);
+
+    // 具体业务逻辑处理
+    void handleTopLayerTouch(const cocos2d::Vec2& position);
+    void handleBottomLayerTouch(const cocos2d::Vec2& position);
+
+    // 按钮点击处理
+    void onHomeButtonClicked();
 private:
     int _levelNumber = 0;
     cocos2d::LayerColor* _topLayer = nullptr;
