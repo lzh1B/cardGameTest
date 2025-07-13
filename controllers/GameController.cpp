@@ -31,3 +31,24 @@ void GameController::logStack() const {
             i, card.cardFace, card.cardSuit, card.posX, card.posY);
     }
 }
+void GameController::handleUndo() {
+    CCLOG("Undo operation triggered by controller");
+    // 这里添加撤回逻辑
+}
+// 处理桌面卡片触摸
+void GameController::handleDeskCardTouch(CardView* card) {
+    CCLOG("Controller: Desk card touched , Position: (%.0f, %.0f)",
+        card->getPositionX(), card->getPositionY());
+}
+
+// 处理手牌卡片触摸
+void GameController::handleHandCardTouch(CardView* card) {
+    if (card->isTopCard()) {
+        CCLOG("Controller: Hand card touched this is Top Card!!!, Position: (%.0f, %.0f)",
+            card->getPositionX(), card->getPositionY());
+    }
+    else {
+        CCLOG("Controller: Bottom card touched : Position: (%.0f, %.0f)",
+            card->getPositionX(), card->getPositionY());
+    }
+}

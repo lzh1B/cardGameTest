@@ -3,6 +3,8 @@
 #pragma once
 #include "cocos2d.h"
 #include "controllers/GameController.h"  // 引入 GameController
+#include "CardView.h"
+
 
 class GameScene : public cocos2d::Scene {
 public:
@@ -14,17 +16,14 @@ public:
     ~GameScene();//析构函数
 
     void setController(GameController* controller);
+
     void createUI();
     void createCardSprites();
     void registerTouchEventHandlers();
 
-    // 触摸事件处理
-    bool onTopLayerTouched(cocos2d::Touch* touch, cocos2d::Event* event);
-    bool onBottomLayerTouched(cocos2d::Touch* touch, cocos2d::Event* event);
-
-    // 具体业务逻辑处理
-    void handleTopLayerTouch(const cocos2d::Vec2& position);
-    void handleBottomLayerTouch(const cocos2d::Vec2& position);
+    // 精灵触摸处理
+    void handleTopLayerSpriteTouch(CardView* sprite);
+    void handleBottomLayerSpriteTouch(CardView* sprite);
 
     // 按钮点击处理
     void onHomeButtonClicked();
@@ -35,5 +34,7 @@ private:
 
     GameController* _controller = nullptr; // 控制器
 
-    std::vector<cocos2d::Sprite*> _playfieldSprites; // 新增：保存 playfield 卡片精灵
+    // 分开存储顶部和底部的精灵
+    std::vector<CardView*> _topSprites;    // 顶部图层精灵
+    std::vector<CardView*> _bottomSprites; // 底部图层精灵
 };

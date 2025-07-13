@@ -58,6 +58,20 @@ void GameScene::createUI() {
         });
     this->addChild(homeButton, 10);
 
+    // 添加撤回按钮 (在Home按钮左侧)
+    auto undoButton = ui::Button::create("back_normal.png", "back_selected.png");
+    undoButton->setPosition(Vec2(visibleSize.width -120, visibleSize.height - 1750));
+    undoButton->addTouchEventListener([this](Ref*, ui::Widget::TouchEventType type) {
+        if (type == ui::Widget::TouchEventType::ENDED) {
+            CCLOG("Undo button clicked");
+            // 这里添加撤回逻辑
+            if (_controller) {
+                _controller->handleUndo();
+            }
+        }
+        });
+    this->addChild(undoButton, 10);
+
     // 创建卡片精灵
     this->createCardSprites();
 
@@ -67,86 +81,116 @@ void GameScene::createUI() {
 
 // 创建卡片精灵的独立函数
 void GameScene::createCardSprites() {
-    // Playfield 卡片
+    // 清空精灵引用
+    _topSprites.clear();
+    _bottomSprites.clear();
+
+    // Playfield 卡片 
     auto deskcards = _controller->getPlayfieldCards();
-    for (const auto& cardData : *deskcards) {
+
+    for (int i = 0; i < deskcards->size(); i++) {
+        const auto& cardData = (*deskcards)[i];
         auto cardSprite = CardView::create(cardData);
         if (cardSprite) {
             cardSprite->setPosition(cardData.posX, cardData.posY + 500);
-            this->addChild(cardSprite);
-            _playfieldSprites.push_back(cardSprite);
+            this->addChild(cardSprite, 1); // 确保卡片在图层上方
+            // 所有顶部图层精灵都是top card
+            cardSprite->setIsTopCard(false);
+            // 底部图层中最后一个精灵设置为top card
+
+            _topSprites.push_back(cardSprite);
         }
         else {
-            CCLOG("Error: Failed to create card sprite at (%d, %d)", cardData.posX, cardData.posY);
+            CCLOG("Error: Failed to create playfield card sprite at (%d, %d)", cardData.posX, cardData.posY);
         }
     }
 
     // Stack 卡片
     auto handcards = _controller->getStackCards();
-    for (const auto& cardData : *handcards) {
+    for (int i = 0; i < handcards->size();++i) {
+        const auto& cardData = (*handcards)[i];
         auto cardSprite = CardView::create(cardData);
         if (cardSprite) {
             cardSprite->setPosition(cardData.posX - 100, cardData.posY - 50);
-            this->addChild(cardSprite);
-            _playfieldSprites.push_back(cardSprite);
+            this->addChild(cardSprite, 2); // 确保堆叠卡片在顶部图层上方
+            
+            bool isTopCard = (i == handcards->size() - 1);
+            log("12111111111111111111:   isTopCard: %d", isTopCard);
+            cardSprite->setIsTopCard(isTopCard);
+
+            _bottomSprites.push_back(cardSprite);
         }
         else {
-            CCLOG("Error: Failed to create card sprite at (%d, %d)", cardData.posX, cardData.posY);
+            CCLOG("Error: Failed to create stack card sprite at (%d, %d)", cardData.posX, cardData.posY);
         }
     }
 }
 
 // 注册触摸事件处理器的独立函数
 void GameScene::registerTouchEventHandlers() {
-    // 顶部图层触摸事件
-    auto topTouchListener = EventListenerTouchOneByOne::create();
-    topTouchListener->onTouchBegan = CC_CALLBACK_2(GameScene::onTopLayerTouched, this);
-    topTouchListener->setSwallowTouches(true);
-    Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(topTouchListener, _topLayer);
+    // 使用全局触摸监听器处理精灵点击
+    auto touchListener = EventListenerTouchOneByOne::create();
+    touchListener->setSwallowTouches(true);
 
-    // 底部图层触摸事件
-    auto bottomTouchListener = EventListenerTouchOneByOne::create();
-    bottomTouchListener->onTouchBegan = CC_CALLBACK_2(GameScene::onBottomLayerTouched, this);
-    bottomTouchListener->setSwallowTouches(true);
-    Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(bottomTouchListener, _bottomLayer);
+    touchListener->onTouchBegan = [this](Touch* touch, Event* event) -> bool {
+        Vec2 touchLocation = touch->getLocation();
+
+        // 1. 检查是否点击了顶部精灵（优先处理）
+        for (auto it = _topSprites.rbegin(); it != _topSprites.rend(); ++it) {
+            auto sprite = *it;
+            if (sprite && sprite->getBoundingBox().containsPoint(touchLocation)) {
+                CCLOG("Touched top layer sprite");
+                //this->handleTopLayerSpriteTouch(sprite);
+                // 调用控制器处理精灵触摸
+                if (_controller) {
+                    _controller->handleDeskCardTouch(sprite);
+                }
+                return true; // 吞掉事件
+            }
+        }
+
+        // 2. 检查是否点击了底部精灵
+        for (auto it = _bottomSprites.rbegin(); it != _bottomSprites.rend(); ++it) {
+            auto sprite = *it;
+            if (sprite && sprite->getBoundingBox().containsPoint(touchLocation)) {
+                CCLOG("Touched bottom layer sprite");
+                //this->handleBottomLayerSpriteTouch(sprite);
+                // 调用控制器处理精灵触摸
+                if (_controller) {
+                    _controller->handleHandCardTouch(sprite);
+                }
+                return true; // 吞掉事件
+            }
+        }
+
+        // 3. 检查是否点击了图层（但没有精灵）
+        if (_topLayer->getBoundingBox().containsPoint(touchLocation)) {
+            CCLOG("Touched Top Layer (no sprite)");
+            return true;
+        }
+
+        if (_bottomLayer->getBoundingBox().containsPoint(touchLocation)) {
+            CCLOG("Touched Bottom Layer (no sprite)");
+            return true;
+        }
+
+        return false;
+        };
+
+    // 使用高优先级确保按钮优先处理
+    Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(touchListener, this);
 }
 
-// 顶部图层触摸处理函数
-bool GameScene::onTopLayerTouched(Touch* touch, Event* event) {
-    Vec2 touchLocation = touch->getLocation();
-    if (_topLayer->getBoundingBox().containsPoint(touchLocation)) {
-        CCLOG("Touched Top Layer");
-        // 添加顶部图层特有的处理逻辑
-        this->handleTopLayerTouch(touchLocation);
-        return true; // 吞掉事件
-    }
-    return false;
+// 顶部图层精灵触摸处理
+void GameScene::handleTopLayerSpriteTouch(CardView* sprite) {
+    CCLOG("Top layer sprite touched: %p", sprite);
+    // 这里添加顶部精灵的具体处理逻辑
 }
 
-// 底部图层触摸处理函数
-bool GameScene::onBottomLayerTouched(Touch* touch, Event* event) {
-    Vec2 touchLocation = touch->getLocation();
-    if (_bottomLayer->getBoundingBox().containsPoint(touchLocation)) {
-        CCLOG("Touched Bottom Layer");
-        // 添加底部图层特有的处理逻辑
-        this->handleBottomLayerTouch(touchLocation);
-        return true; // 吞掉事件
-    }
-    return false;
-}
-
-// 顶部图层具体业务逻辑
-void GameScene::handleTopLayerTouch(const Vec2& position) {
-    // 实现顶部图层的具体业务逻辑
-    // 例如：处理卡片操作、游戏控制等
-    CCLOG("Top layer touch at position: (%.1f, %.1f)", position.x, position.y);
-}
-
-// 底部图层具体业务逻辑
-void GameScene::handleBottomLayerTouch(const Vec2& position) {
-    // 实现底部图层的具体业务逻辑
-    // 例如：处理堆叠卡片、特殊操作等
-    CCLOG("Bottom layer touch at position: (%.1f, %.1f)", position.x, position.y);
+// 底部图层精灵触摸处理
+void GameScene::handleBottomLayerSpriteTouch(CardView* sprite) {
+    CCLOG("Bottom layer sprite touched: %p", sprite);
+    // 这里添加底部精灵的具体处理逻辑
 }
 
 // Home 按钮点击处理
@@ -163,6 +207,10 @@ GameScene::~GameScene() {
     CC_SAFE_DELETE(_topLayer);
     CC_SAFE_DELETE(_bottomLayer);
     CC_SAFE_DELETE(_controller);
+
+    // 清空精灵列表（不需要删除精灵，因为它们是场景的子节点）
+    _topSprites.clear();
+    _bottomSprites.clear();
 }
 
 void GameScene::setController(GameController* controller) {
