@@ -3,6 +3,7 @@
 #include "ui/CocosGUI.h"
 #include "LevelSelectScene.h"
 #include "utils/JsonUtils.h"
+#include "CardView.h"
 
 USING_NS_CC;
 
@@ -71,11 +72,24 @@ void GameScene::createUI() {
     this->addChild(homeButton, 10);
 
     // ==== 创建 Playfield 卡片精灵 ====
-    auto cards = _controller->getPlayfieldCards(); // 假设你已实现 getPlayfieldCards()
-    for (const auto& cardData : *cards) {
-        auto cardSprite = Sprite::create("res/card_general.png");
+    auto deskcards = _controller->getPlayfieldCards(); // 假设你已实现 getPlayfieldCards()
+    for (const auto& cardData : *deskcards) {
+        auto cardSprite = CardView::create(cardData);
         if (cardSprite) {
             cardSprite->setPosition(cardData.posX, cardData.posY+500);
+            this->addChild(cardSprite);
+            _playfieldSprites.push_back(cardSprite);
+        }
+        else {
+            CCLOG("Error: Failed to create card sprite at (%d, %d)", cardData.posX, cardData.posY);
+        }
+    }
+    // ==== 创建 Stack 卡片精灵 ====
+    auto handcards = _controller->getStackCards(); // 假设你已实现 getPlayfieldCards()
+    for (const auto& cardData : *handcards) {
+        auto cardSprite = CardView::create(cardData);
+        if (cardSprite) {
+            cardSprite->setPosition(cardData.posX-100, cardData.posY-50 );
             this->addChild(cardSprite);
             _playfieldSprites.push_back(cardSprite);
         }
