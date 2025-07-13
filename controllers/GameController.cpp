@@ -5,28 +5,28 @@
 USING_NS_CC;
 
 GameController::~GameController() {
-    delete _manager;
+    delete _gameManager;
     CCLOG("GameController Destroyed");
 }
 
 GameController::GameController(std::vector<CardData>* playfield, std::vector<CardData>* stack)
    {
-    _manager = new GameManager(playfield, stack);
+    _gameManager = new GameManager(playfield, stack);
     logPlayfield();
     logStack();
 }
 
 void GameController::logPlayfield() const {
-    for (size_t i = 0; i < _manager->getPlayfieldCards()->size(); ++i) {
-        const CardData& card = (*_manager->getPlayfieldCards())[i];
+    for (size_t i = 0; i < _gameManager->getPlayfieldCards()->size(); ++i) {
+        const CardData& card = (*_gameManager->getPlayfieldCards())[i];
         CCLOG("Playfield[%zu]: Face=%d, Suit=%d, Position=(%d, %d)",
             i, card.cardFace, card.cardSuit, card.posX, card.posY);
     }
 }
 
 void GameController::logStack() const {
-    for (size_t i = 0; i < _manager->getStackCards()->size(); ++i) {
-        const CardData& card = (*_manager->getStackCards())[i];
+    for (size_t i = 0; i < _gameManager->getStackCards()->size(); ++i) {
+        const CardData& card = (*_gameManager->getStackCards())[i];
         CCLOG("Stack[%zu]: Face=%d, Suit=%d, Position=(%d, %d)",
             i, card.cardFace, card.cardSuit, card.posX, card.posY);
     }

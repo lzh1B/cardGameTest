@@ -14,8 +14,8 @@ public:
     void logPlayfield() const;
     void logStack() const;
 
-    std::vector<CardData>* getPlayfieldCards(){ return _manager->getPlayfieldCards(); }
-    std::vector<CardData>* getStackCards(){ return _manager->getStackCards(); }
+    std::vector<CardData>* getPlayfieldCards(){ return _gameManager->getPlayfieldCards(); }
+    std::vector<CardData>* getStackCards(){ return _gameManager->getStackCards(); }
 
     //事件处理
     // 
@@ -29,5 +29,5 @@ public:
     void handleHandCardTouch(CardView* card);
 
 private:
-    GameManager* _manager = nullptr;
+    GameManager* _gameManager = nullptr;
 };
