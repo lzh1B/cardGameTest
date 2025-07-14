@@ -11,6 +11,7 @@
     - Windows 10 SDK (建议同时安装最新版和10.0.17763.0版本)
       
 ## 注意事项
-    -环境准备完成后，创建新的cocos2dx工程，将Classes目录和Resources内的文件放入你的项目对于的目录中
-    -在同级目录win32的vs项目工程中即可运行，注意Classes/configs中保存的levelConfig.json配置文件目前只是存放，真正加载的是在Resources内的它的副本
+- **项目目录配置**
+- 环境准备完成后，创建新的cocos2dx工程，将Classes目录和Resources内的文件放入你的项目对于的目录中
+-在同级目录win32的vs项目工程中即可运行，注意Classes/configs中保存的levelConfig.json配置文件目前只是存放，真正加载的是在Resources内的它的副本
 
