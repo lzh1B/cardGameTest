@@ -1,4 +1,3 @@
-# Cocos2dx 3.17 项目配置指南
 
 ## 环境要求
 - **Cocos2dx 版本**: 3.17
@@ -11,3 +10,7 @@
     - MSVC v142 - VS 2019 C++ 生成工具
     - Windows 10 SDK (建议同时安装最新版和10.0.17763.0版本)
     - C++ ATL 和 MFC 支持
+      
+## 注意事项
+    -环境准备完成后，创建新的cocos2dx工程，将Classes目录和Resources内的文件放入你的项目对于的目录中，在同级目录win32的vs项目工程中即可运行，注意Classes/configs中保存的levelConfig.json配置文件目前只是存放，真正加载的是在Resources内的它的副本
+
