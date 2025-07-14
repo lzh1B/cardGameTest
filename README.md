@@ -9,7 +9,6 @@
     - MSVC v141 - VS 2017 C++ 生成工具
     - MSVC v142 - VS 2019 C++ 生成工具
     - Windows 10 SDK (建议同时安装最新版和10.0.17763.0版本)
-    - C++ ATL 和 MFC 支持
       
 ## 注意事项
     -环境准备完成后，创建新的cocos2dx工程，将Classes目录和Resources内的文件放入你的项目对于的目录中
